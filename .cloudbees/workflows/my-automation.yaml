@@ -1,12 +1,10 @@
 apiVersion: automation.cloudbees.io/v1alpha1
 kind: workflow
 name: My automation
-
 on:
   push:
     branches:
-      - '**'
-
+      - "**"
 jobs:
   build:
     steps:
@@ -15,3 +13,30 @@ jobs:
         shell: sh
         run: |
           echo "hello world"
+          
+      - uses: cloudbees-io/checkout@v1
+
+      - name: dump files
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          echo "__________________ DUMP FILES __________________"
+          find .
+
+      - name: build code
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          echo "__________________ GO BUILD __________________"
+          export GOPATH=$HOME/go
+          export PATH=$PATH:$GOPATH/bin
+          go version
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s"
+
+      - name: verify artifact
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          echo "__________________ VERIFY BUILD __________________"
+          ls -al simple-go-app
+          ./simple-go-app
