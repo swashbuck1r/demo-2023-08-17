@@ -12,7 +12,7 @@ jobs:
         uses: docker://golang:1.20.3-alpine3.17
         shell: sh
         run: |
-          echo "hello world12"
+          echo "hello world13"
       - name: loop for 65 secs
         uses: docker://amazon/aws-cli
         shell: bash
